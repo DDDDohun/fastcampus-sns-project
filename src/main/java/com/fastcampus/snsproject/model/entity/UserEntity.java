@@ -1,5 +1,6 @@
 package com.fastcampus.snsproject.model.entity;
 
+import com.fastcampus.snsproject.model.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +27,12 @@ public class UserEntity {
     @Column(name = "user_name", unique = true)
     private String userName;
 
+    @Column(name = "password")
     private String password;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private UserRole role = UserRole.USER;
 
     @Column(name = "registered_at")
     private Timestamp registeredAt;
@@ -34,9 +40,8 @@ public class UserEntity {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @Column(name = "removed_at")
-    private Timestamp removedAt;
-
+    @Column(name = "deleted_at")
+    private Timestamp deletedAt;
 
     @PrePersist
     void registeredAt() {
@@ -46,6 +51,13 @@ public class UserEntity {
     @PreUpdate
     void updatedAt() {
         this.updatedAt = Timestamp.from(Instant.now());
+    }
+
+    public static UserEntity of(String userName, String password) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserName(userName);
+        userEntity.setPassword(password);
+        return userEntity;
     }
 
 }
