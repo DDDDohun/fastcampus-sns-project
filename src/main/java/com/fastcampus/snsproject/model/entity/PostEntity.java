@@ -13,25 +13,24 @@ import java.time.Instant;
 @Setter
 @Getter
 @Entity
-@Table(name = "\"user\"")
-@SQLDelete(sql = "UPDATE \"user\" SET deleted_at = NOW() WHERE id=?")
+@Table(name = "\"post\"")
+@SQLDelete(sql = "UPDATE \"post\" SET deleted_at = NOW() WHERE id=?")
 @Where(clause = "deleted_at is NULL")
-
-public class UserEntity {
+public class PostEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id = null;
 
-    @Column(name = "user_name", unique = true)
-    private String userName;
+    @Column(name = "title")
+    private String title;
 
-    @Column(name = "password")
-    private String password;
+    @Column(name = "body", columnDefinition = "TEXT")
+    private String body;
 
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private UserRole role = UserRole.USER;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @Column(name = "registered_at")
     private Timestamp registeredAt;
@@ -51,12 +50,4 @@ public class UserEntity {
     void updatedAt() {
         this.updatedAt = Timestamp.from(Instant.now());
     }
-
-    public static UserEntity of(String userName, String password) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserName(userName);
-        userEntity.setPassword(password);
-        return userEntity;
-    }
-
 }
